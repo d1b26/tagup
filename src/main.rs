@@ -4,12 +4,15 @@ use iced::widget::{button, column, text, text_input, Column};
 #[derive(Default)]
 struct Counter {
     value: i64,
+    input: String,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 enum Message {
     Increment,
     Decrement,
+    InputValue(String),
+    Exectue,
 }
 
 impl Counter {
@@ -20,6 +23,14 @@ impl Counter {
             }
             Message::Decrement => {
                 self.value -= 1;
+            }
+            Message::Exectue => {
+                println!("exec ed");
+                println!("{:?}", self.input);
+            }
+            Message::InputValue(val) => {
+                println!("{:?}", val);
+                self.input = val;
             }
         }
     }
@@ -32,8 +43,11 @@ impl Counter {
         // The number
         let counter = text(self.value);
 
+        let inputbox = text_input("ya", 
+        &self.input).on_input(|value| Message::InputValue(value)).on_submit(Message::Exectue);
+
         // The layout
-        let interface = column![increment, counter, decrement];
+        let interface = column![increment, counter, decrement, inputbox];
 
         interface
     }
