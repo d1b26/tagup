@@ -1,23 +1,44 @@
-use iced::widget::{button, column, text, Column};
+use iced::widget::{button, column, text, text_input, Column};
 
-pub fn main() -> iced::Result {
-    iced::run("A counter", update, view)
+
+#[derive(Default)]
+struct Counter {
+    value: i64,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 enum Message {
     Increment,
+    Decrement,
 }
 
-fn update(value: &mut u64, message: Message) {
-    match message {
-        Message::Increment => *value += 1,
+impl Counter {
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::Increment => {
+                self.value += 1;
+            }
+            Message::Decrement => {
+                self.value -= 1;
+            }
+        }
+    }
+
+    fn view(&self) -> Column<Message> {
+        // The buttons
+        let increment = button("+").on_press(Message::Increment);
+        let decrement = button("-").on_press(Message::Decrement);
+
+        // The number
+        let counter = text(self.value);
+
+        // The layout
+        let interface = column![increment, counter, decrement];
+
+        interface
     }
 }
 
-fn view(value: &u64) -> Column<Message> {
-    column![
-        text(value),
-        button("+").on_press(Message::Increment),
-    ]
+pub fn main() -> iced::Result {
+    iced::run("A cool counter", Counter::update, Counter::view)
 }
